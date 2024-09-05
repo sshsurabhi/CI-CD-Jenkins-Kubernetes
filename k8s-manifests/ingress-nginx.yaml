@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingres
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    cert-manager.io/acme-challenge-type: http01
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - newrecord.course-datascientest.cloudns.ch
+    secretName: dstjenkins # Updated secret name
+  rules:
+  - host: newrecord.course-datascientest.cloudns.ch
+    http:
+      paths:
+      - path: /api/v1/casts
+        pathType: Prefix
+        backend:
+          service:
+            name: cast-service
+            port:
+              number: 8003
+      - path: /api/v1/movies
+        pathType: Prefix
+        backend:
+          service:
+            name: movie-service
+            port:
+              number: 8002
